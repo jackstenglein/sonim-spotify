@@ -8,37 +8,39 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/playlistName"
-        android:layout_width="wrap_content"
+        android:id="@+id/primaryText"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_default"
         android:layout_marginTop="@dimen/margin_default"
+        android:layout_marginEnd="@dimen/margin_default"
         android:textSize="@dimen/list_primary_text_size"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Playlist Name" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="Episode Name" />
 
     <TextView
-        android:id="@+id/playlistNumTracks"
-        android:layout_width="wrap_content"
+        android:id="@+id/secondaryText"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_list_rows"
         android:layout_marginStart="@dimen/margin_default"
         android:layout_marginBottom="@dimen/margin_default"
+        android:layout_marginEnd="@dimen/margin_default"
         android:textSize="@dimen/list_secondary_text_size"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/playlistName"
-        tools:text="30 songs" />
+        app:layout_constraintTop_toBottomOf="@id/primaryText"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="2/2/21 • 1 hr 15 min" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"
         android:layout_marginTop="@dimen/margin_default"
-        app:layout_constraintTop_toBottomOf="@id/playlistNumTracks"
+        app:layout_constraintTop_toBottomOf="@id/secondaryText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

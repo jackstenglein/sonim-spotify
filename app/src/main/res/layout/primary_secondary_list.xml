@@ -10,10 +10,10 @@
         android:id="@+id/playlistList"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        tools:listitem="@layout/playlist_item"
+        tools:listitem="@layout/primary_secondary_list_item"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
-    
+
 </androidx.constraintlayout.widget.ConstraintLayout>
