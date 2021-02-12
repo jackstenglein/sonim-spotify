@@ -2,7 +2,15 @@
 <resources>
     <dimen name="margin_default">8dp</dimen>
     <dimen name="margin_small">2dp</dimen>
+    <dimen name="margin_large">12dp</dimen>
     <dimen name="margin_list_rows">4dp</dimen>
+    <dimen name="margin_top_now_playing_image">16dp</dimen>
+    <dimen name="margin_start_now_playing_image">40dp</dimen>
+    <dimen name="margin_end_now_playing_image">40dp</dimen>
+    <dimen name="margin_vertical_like_button">3dp</dimen>
+    <dimen name="margin_play_button">-12dp</dimen>
     <dimen name="list_primary_text_size">14sp</dimen>
     <dimen name="list_secondary_text_size">12sp</dimen>
+    <dimen name="artist_name_size">10sp</dimen>
+    <dimen name="progress_time_text_size">7sp</dimen>
 </resources>
