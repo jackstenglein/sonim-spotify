@@ -2,6 +2,7 @@
 <resources>
     <dimen name="margin_default">8dp</dimen>
     <dimen name="margin_small">2dp</dimen>
+    <dimen name="margin_medium">4dp</dimen>
     <dimen name="margin_large">12dp</dimen>
     <dimen name="margin_list_rows">4dp</dimen>
     <dimen name="margin_top_now_playing_image">16dp</dimen>
@@ -13,4 +14,6 @@
     <dimen name="list_secondary_text_size">12sp</dimen>
     <dimen name="artist_name_size">10sp</dimen>
     <dimen name="progress_time_text_size">7sp</dimen>
+    <dimen name="home_song_text_size">10sp</dimen>
+    <dimen name="home_artist_name_size">8sp</dimen>
 </resources>
