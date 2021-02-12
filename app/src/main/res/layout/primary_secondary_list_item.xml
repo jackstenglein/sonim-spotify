@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="Episode Name" />
+        tools:text="Primary Text" />
 
     <TextView
         android:id="@+id/secondaryText"
@@ -32,7 +32,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/primaryText"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="2/2/21 • 1 hr 15 min" />
+        tools:text="Secondary Text • Ternary Text" />
 
     <View
         android:layout_width="match_parent"
