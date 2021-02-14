@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="progress_background_tint">#FF000000</color>
     <color name="progress_tint">#FFFFFF</color>
+    <color name="selected_background_tint">#FFE8EEF0</color>
+    <color name="selected_outline_tint">#FF5C8BA5</color>
 </resources>

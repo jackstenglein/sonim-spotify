@@ -16,4 +16,5 @@
     <dimen name="progress_time_text_size">7sp</dimen>
     <dimen name="home_song_text_size">10sp</dimen>
     <dimen name="home_artist_name_size">8sp</dimen>
+    <dimen name="selected_border_size">2dp</dimen>
 </resources>
