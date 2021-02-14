@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Sonim Spotify Client</string>
+    <string name="app_name">Music</string>
     <string name="search">Search</string>
     <string name="playlists">Playlists</string>
     <string name="liked_songs">Liked Songs</string>
