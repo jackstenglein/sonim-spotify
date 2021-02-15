@@ -12,12 +12,15 @@ import java.util.HashMap;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
+import com.spotify.protocol.client.CallResult;
+import com.spotify.protocol.types.PlayerState;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
 import com.yashovardhan99.timeit.Stopwatch;
 
-public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
+public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickListener,
+        View.OnClickListener {
 
     public static final String REDIRECT_URI = "sonimspotifyclient://callback";
     public static final String CLIENT_ID = "4a00bb1466e04ec5885388b05fb44a79";
@@ -164,8 +167,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         nowPlayingUI = new NowPlayingUI(this, spotifyAppRemote);
         stopwatch = new Stopwatch();
         stopwatch.setClockDelay(SPOTIFY_POLLING_DELAY_MS);
-        stopwatch.setOnTickListener(nowPlayingUI);
+        stopwatch.setOnTickListener(this);
         stopwatch.start();
+    }
+
+    @Override
+    public void onTick(Stopwatch stopwatch) {
+        spotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(
+            new CallResult.ResultCallback<PlayerState>() {
+                @Override
+                public void onResult(PlayerState playerState) {
+                    nowPlayingUI.update(playerState);
+                }
+        });
     }
 
     @Override

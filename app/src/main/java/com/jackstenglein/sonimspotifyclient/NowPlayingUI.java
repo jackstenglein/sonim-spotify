@@ -12,10 +12,9 @@ import com.spotify.protocol.client.CallResult;
 import com.spotify.protocol.types.Image;
 import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
-import com.yashovardhan99.timeit.Stopwatch;
 import java.util.Locale;
 
-public class NowPlayingUI implements Stopwatch.OnTickListener {
+public class NowPlayingUI {
 
     public static final String TIME_FORMAT = "%d:%02d";
 
@@ -41,19 +40,8 @@ public class NowPlayingUI implements Stopwatch.OnTickListener {
         progressBar = activity.findViewById(R.id.progressBar);
         this.spotifyAppRemote = spotifyAppRemote;
     }
-
-    @Override
-    public void onTick(Stopwatch stopwatch) {
-        spotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(
-            new CallResult.ResultCallback<PlayerState>() {
-                @Override
-                public void onResult(PlayerState playerState) {
-                    update(playerState);
-                }
-        });
-    }
     
-    private void update(PlayerState playerState) {
+    public void update(PlayerState playerState) {
         Track track = playerState.track;
         if (track == null) {
             Log.d(TAG, "No track playing.");

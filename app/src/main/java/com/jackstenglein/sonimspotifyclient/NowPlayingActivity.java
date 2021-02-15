@@ -8,9 +8,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
+import com.spotify.protocol.client.CallResult;
+import com.spotify.protocol.types.LibraryState;
+import com.spotify.protocol.types.PlayerState;
 import com.yashovardhan99.timeit.Stopwatch;
 
-public class NowPlayingActivity extends AppCompatActivity implements View.OnClickListener {
+public class NowPlayingActivity extends AppCompatActivity implements Stopwatch.OnTickListener,
+        View.OnClickListener {
 
     private static final String TAG = "NowPlayingActivity";
 
@@ -19,6 +23,8 @@ public class NowPlayingActivity extends AppCompatActivity implements View.OnClic
     // Now playing UI elements and polling timer
     private Stopwatch stopwatch;
     private NowPlayingUI nowPlayingUI;
+    private PlayerState currentPlayerState;
+    private LibraryState currentLibraryState;
 
     // UI elements for player controls
     private ImageView shuffleButton;
@@ -66,8 +72,49 @@ public class NowPlayingActivity extends AppCompatActivity implements View.OnClic
         nowPlayingUI = new NowPlayingUI(this, spotifyAppRemote);
         stopwatch = new Stopwatch();
         stopwatch.setClockDelay(HomeActivity.SPOTIFY_POLLING_DELAY_MS);
-        stopwatch.setOnTickListener(nowPlayingUI);
+        stopwatch.setOnTickListener(this);
         stopwatch.start();
+    }
+
+    @Override
+    public void onTick(Stopwatch stopwatch) {
+        spotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(
+            new CallResult.ResultCallback<PlayerState>() {
+                @Override
+                public void onResult(PlayerState playerState) {
+                    currentPlayerState = playerState;
+                    nowPlayingUI.update(playerState);
+                    getLibraryState();
+                }
+        });
+    }
+
+    private void getLibraryState() {
+        if (currentPlayerState.track != null) {
+            spotifyAppRemote.getUserApi().getLibraryState(currentPlayerState.track.uri)
+                .setResultCallback(new CallResult.ResultCallback<LibraryState>() {
+                    @Override
+                    public void onResult(LibraryState libraryState) {
+                        currentLibraryState = libraryState;
+                        updateControlsUI();
+                    }
+            });
+        }
+    }
+
+    private void updateControlsUI() {
+        if (currentPlayerState.isPaused) {
+            playButton.setImageResource(R.drawable.ic_baseline_play_arrow_24);
+        } else {
+            playButton.setImageResource(R.drawable.ic_baseline_pause_24);
+        }
+
+        if (currentLibraryState.isAdded) {
+            likeButton.setImageResource(R.drawable.ic_baseline_favorite_24);
+        } else {
+            likeButton.setImageResource(R.drawable.ic_baseline_favorite_border_24);
+        }
+
     }
 
     @Override
@@ -87,21 +134,36 @@ public class NowPlayingActivity extends AppCompatActivity implements View.OnClic
 
     private void handleShuffleClick() {
         Log.d(TAG, "handleShuffleClick");
+        spotifyAppRemote.getPlayerApi().toggleShuffle();
     }
 
     private void handlePreviousClick() {
         Log.d(TAG, "handlePreviousClick");
+        spotifyAppRemote.getPlayerApi().skipPrevious();
     }
 
     private void handlePlayClick() {
         Log.d(TAG, "handlePlayClick");
+        if (currentPlayerState.isPaused) {
+            spotifyAppRemote.getPlayerApi().resume();
+        } else {
+            spotifyAppRemote.getPlayerApi().pause();
+        }
     }
 
     private void handleNextClick() {
         Log.d(TAG, "handleNextClick");
+        spotifyAppRemote.getPlayerApi().skipNext();
     }
 
     private void handleLikeClick() {
         Log.d(TAG, "handleLikeClick");
+        if (currentLibraryState == null) return;
+
+        if (currentLibraryState.isAdded) {
+            spotifyAppRemote.getUserApi().removeFromLibrary(currentLibraryState.uri);
+        } else {
+            spotifyAppRemote.getUserApi().addToLibrary(currentLibraryState.uri);
+        }
     }
 }
