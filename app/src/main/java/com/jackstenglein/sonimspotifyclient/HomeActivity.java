@@ -3,30 +3,25 @@ package com.jackstenglein.sonimspotifyclient;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import java.util.HashMap;
-import java.util.Locale;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
-import com.spotify.protocol.client.CallResult;
-import com.spotify.protocol.types.Image;
-import com.spotify.protocol.types.PlayerState;
-import com.spotify.protocol.types.Track;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
 import com.yashovardhan99.timeit.Stopwatch;
 
-public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickListener {
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
+
+    public static final String REDIRECT_URI = "sonimspotifyclient://callback";
+    public static final String CLIENT_ID = "4a00bb1466e04ec5885388b05fb44a79";
+    public static final int SPOTIFY_POLLING_DELAY_MS = 500;
 
     private enum SelectableItem {
 
@@ -77,13 +72,10 @@ public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickL
 
     private static final String TAG = "HomeActivity";
     private static final int REQUEST_CODE = 1326;
-    private static final String REDIRECT_URI = "sonimspotifyclient://callback";
-    private static final String CLIENT_ID = "4a00bb1466e04ec5885388b05fb44a79";
     private static final String[] SPOTIFY_SCOPES = new String[] {"app-remote-control",
             "playlist-read-private", "user-library-read", "user-library-modify",
             "user-read-playback-position" };
-    private static final String TIME_FORMAT = "%d:%02d";
-    private static final int SPOTIFY_POLLING_DELAY_MS = 500;
+
 
     // Spotify connection variables
     private String spotifyAccessCode;
@@ -91,14 +83,7 @@ public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickL
 
     // Now playing UI elements and polling timer
     private Stopwatch stopwatch;
-    private Track currentTrack;
-    private View nowPlayingInfoContainer;
-    private ImageView albumImage;
-    private TextView songTitle;
-    private TextView artistName;
-    private TextView timeElapsed;
-    private TextView totalTime;
-    private ProgressBar progressBar;
+    private NowPlayingUI nowPlayingUI;
 
     // UI elements to display selected item
     private SelectableItem currentSelection;
@@ -110,21 +95,13 @@ public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
 
-        // Get now playing UI elements
-        nowPlayingInfoContainer = findViewById(R.id.nowPlayingInfoContainer);
-        albumImage = findViewById(R.id.albumImage);
-        songTitle = findViewById(R.id.songTitle);
-        artistName = findViewById(R.id.artistName);
-        timeElapsed = findViewById(R.id.timeElapsed);
-        totalTime = findViewById(R.id.totalTime);
-        progressBar = findViewById(R.id.progressBar);
-
         // Get UI elements for displaying selected item
         selectedBackground = ContextCompat.getDrawable(this, R.drawable.selected_item);
         currentSelection = SelectableItem.Search;
         for (SelectableItem item : SelectableItem.values()) {
             View view = findViewById(item.getViewID());
             assert(view != null);
+            view.setOnClickListener(this);
             selectableViews.put(item, view);
         }
 
@@ -184,68 +161,11 @@ public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickL
     }
 
     private void subscribeToPlayerState() {
+        nowPlayingUI = new NowPlayingUI(this, spotifyAppRemote);
         stopwatch = new Stopwatch();
         stopwatch.setClockDelay(SPOTIFY_POLLING_DELAY_MS);
-        stopwatch.setOnTickListener(this);
+        stopwatch.setOnTickListener(nowPlayingUI);
         stopwatch.start();
-    }
-
-    @Override
-    public void onTick(Stopwatch stopwatch) {
-        spotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(
-            new CallResult.ResultCallback<PlayerState>() {
-                @Override
-                public void onResult(PlayerState playerState) {
-                    updateNowPlayingInformation(playerState);
-                }
-        });
-    }
-
-    private void updateNowPlayingInformation(PlayerState playerState) {
-        Track track = playerState.track;
-        if (track == null) {
-            Log.d(TAG, "No track playing.");
-            currentTrack = null;
-            nowPlayingInfoContainer.setVisibility(View.INVISIBLE);
-            return;
-        }
-
-        updateElapsedTime(playerState);
-
-        if (track.equals(currentTrack)) return;
-
-        Log.d(TAG, "Playing track: " + track.name);
-        currentTrack = track;
-
-        songTitle.setText(track.name);
-        artistName.setText(track.artist.name);
-        progressBar.setMax((int)track.duration);
-        totalTime.setText(String.format(Locale.getDefault(),TIME_FORMAT, getMinutes(track.duration),
-                getSeconds(track.duration)));
-
-        spotifyAppRemote.getImagesApi().getImage(track.imageUri, Image.Dimension.SMALL)
-                .setResultCallback(new CallResult.ResultCallback<Bitmap>() {
-                    @Override
-                    public void onResult(Bitmap bitmap) {
-                        albumImage.setImageBitmap(bitmap);
-                    }
-                });
-
-        nowPlayingInfoContainer.setVisibility(View.VISIBLE);
-    }
-
-    private void updateElapsedTime(PlayerState playerState) {
-        timeElapsed.setText(String.format(Locale.getDefault(),TIME_FORMAT,
-            getMinutes(playerState.playbackPosition), getSeconds(playerState.playbackPosition)));
-        progressBar.setProgress((int)playerState.playbackPosition, true);
-    }
-
-    private long getMinutes(long duration) {
-        return (duration / 1000) / 60;
-    }
-
-    private long getSeconds(long duration) {
-        return (duration / 1000) % 60;
     }
 
     @Override
@@ -285,7 +205,13 @@ public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickL
     }
 
     private void selectCurrentItem() {
-        Intent intent = new Intent(this, currentSelection.getActivityClass());
+//        Intent intent = new Intent(this, currentSelection.getActivityClass());
+        Intent intent = new Intent(this, NowPlayingActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onClick(View view) {
+        selectCurrentItem();
     }
 }
