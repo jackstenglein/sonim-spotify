@@ -35,4 +35,9 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    implementation 'com.spotify.android:auth:1.2.3' // Spotify auth SDK
+    implementation project(':spotify-app-remote-0.7.1') // Spotify app remote SDK
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.yashovardhan99.timeit:timeit:1.2.0' // Stopwatch for polling Spotify
 }

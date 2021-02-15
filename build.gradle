@@ -3,6 +3,9 @@ buildscript {
     repositories {
         google()
         jcenter()
+        flatDir {
+            dirs 'app/libs'
+        }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:4.1.0"

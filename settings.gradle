@@ -1,2 +1,3 @@
+include ':spotify-app-remote-0.7.1'
 include ':app'
 rootProject.name = "Sonim Spotify Client"

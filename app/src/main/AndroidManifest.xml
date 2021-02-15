@@ -20,6 +20,8 @@
         <activity android:name=".LikedSongsActivity" />
         <activity android:name=".FollowedPodcastsActivity" />
         <activity android:name=".NowPlayingActivity" />
+        <activity android:name="com.spotify.sdk.android.auth.LoginActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     </application>
 
 </manifest>

@@ -138,6 +138,8 @@
         app:layout_constraintTop_toBottomOf="@id/nowPlayingContainer" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/nowPlayingInfoContainer"
+        android:visibility="invisible"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
