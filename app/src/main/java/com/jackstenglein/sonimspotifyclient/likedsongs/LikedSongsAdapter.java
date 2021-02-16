@@ -7,16 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.jackstenglein.sonimspotifyclient.R;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import kaaes.spotify.webapi.android.models.Pager;
 
 public class LikedSongsAdapter<T> extends RecyclerView.Adapter<LikedSongsAdapter.ViewHolder<T>> {
@@ -28,7 +25,6 @@ public class LikedSongsAdapter<T> extends RecyclerView.Adapter<LikedSongsAdapter
     }
 
     static class ViewHolder<T> extends RecyclerView.ViewHolder {
-
 
         private final LikedSongsDataSource<T> dataSource;
         private final View itemContainer;
@@ -51,23 +47,33 @@ public class LikedSongsAdapter<T> extends RecyclerView.Adapter<LikedSongsAdapter
         }
     }
 
+    private static final int PAGINATION_QUERY_BUFFER = 10;
+    private static final int SCROLL_UP_INDEX = 5;
+    private static final int SCROLL_DOWN_INDEX = 4;
+
     private final LikedSongsDataSource<T> dataSource;
+    private final LinearLayoutManager layoutManager;
     private Drawable selectedBackground;
     private int selectedItem;
     private final List<T> items = new ArrayList<>();
+    private boolean requestPending;
     private Pager<T> lastPage;
 
-    private LikedSongsAdapter(LikedSongsDataSource<T> dataSource) {
+    private LikedSongsAdapter(LikedSongsDataSource<T> dataSource,
+                              LinearLayoutManager layoutManager) {
         this.dataSource = dataSource;
+        this.layoutManager = layoutManager;
     }
 
-    public static <T> LikedSongsAdapter<T> create(LikedSongsDataSource<T> dataSource) {
-        return new LikedSongsAdapter<>(dataSource);
+    public static <T> LikedSongsAdapter<T> create(LikedSongsDataSource<T> dataSource,
+                                                  LinearLayoutManager layoutManager) {
+        return new LikedSongsAdapter<>(dataSource, layoutManager);
     }
 
     public void addPage(Pager<T> page) {
         items.addAll(page.items);
         lastPage = page;
+        requestPending = false;
         notifyDataSetChanged();
     }
 
@@ -76,12 +82,43 @@ public class LikedSongsAdapter<T> extends RecyclerView.Adapter<LikedSongsAdapter
             if (selectedItem > 0) {
                 selectedItem--;
             }
+            scrollPageDownIfNecessary();
         } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
             if (selectedItem < items.size() - 1) {
                 selectedItem++;
             }
+            scrollPageUpIfNecessary();
+            requestNextPageIfNecessary();
         }
         notifyDataSetChanged();
+    }
+
+    private void scrollPageDownIfNecessary() {
+        if (selectedItem % SCROLL_DOWN_INDEX == 0) {
+            layoutManager.scrollToPositionWithOffset(selectedItem - SCROLL_DOWN_INDEX, 0);
+        }
+    }
+
+    private void scrollPageUpIfNecessary() {
+        if (selectedItem % SCROLL_UP_INDEX == 0) {
+            layoutManager.scrollToPositionWithOffset(selectedItem, 0);
+        }
+    }
+
+    private void requestNextPageIfNecessary() {
+        if (lastPage.next == null) return;
+        if (requestPending) return;
+        if (selectedItem < items.size() - PAGINATION_QUERY_BUFFER) return;
+
+        requestPending = true;
+        dataSource.getNextPage(lastPage);
+    }
+
+    public T getSelectedItem() {
+        if (items.size() > 0)
+            return items.get(selectedItem);
+
+        return null;
     }
 
     @Override
