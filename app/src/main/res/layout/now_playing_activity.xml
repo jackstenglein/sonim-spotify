@@ -78,6 +78,9 @@
     <ImageView
         android:id="@+id/shuffleButton"
         android:src="@drawable/ic_baseline_shuffle_24"
+        android:background="@drawable/selectable_item_background"
+        android:nextFocusRight="@id/previousButton"
+        android:nextFocusLeft="@id/likeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_vertical_like_button"
@@ -91,6 +94,9 @@
 
     <ImageView
         android:id="@+id/previousButton"
+        android:background="@drawable/selectable_item_background"
+        android:nextFocusRight="@id/playButton"
+        android:nextFocusLeft="@id/shuffleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_default"
@@ -104,6 +110,9 @@
 
     <ImageView
         android:id="@+id/playButton"
+        android:background="@drawable/selectable_item_background"
+        android:nextFocusRight="@id/nextButton"
+        android:nextFocusLeft="@id/previousButton"
         android:src="@drawable/ic_baseline_play_arrow_24"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -115,6 +124,9 @@
 
     <ImageView
         android:id="@+id/nextButton"
+        android:background="@drawable/selectable_item_background"
+        android:nextFocusRight="@id/likeButton"
+        android:nextFocusLeft="@id/playButton"
         android:src="@drawable/ic_baseline_skip_next_24"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -126,6 +138,9 @@
 
     <ImageView
         android:id="@+id/likeButton"
+        android:background="@drawable/selectable_item_background"
+        android:nextFocusRight="@id/shuffleButton"
+        android:nextFocusLeft="@id/nextButton"
         android:src="@drawable/ic_baseline_favorite_24"
         android:layout_width="0dp"
         android:layout_height="0dp"

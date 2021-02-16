@@ -24,6 +24,7 @@ public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickL
 
     public static final String REDIRECT_URI = "sonimspotifyclient://callback";
     public static final String CLIENT_ID = "4a00bb1466e04ec5885388b05fb44a79";
+    public static final String SPOTIFY_TOKEN_EXTRA = "SpotifyToken";
     public static final int SPOTIFY_POLLING_DELAY_MS = 500;
 
     private enum SelectableItem {
@@ -74,14 +75,15 @@ public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickL
     }
 
     private static final String TAG = "HomeActivity";
-    private static final int REQUEST_CODE = 1326;
+    private static final int SPOTIFY_REQUEST_CODE = 1326;
+    private static final int NAVIGATION_REQUEST_CODE = 2205;
     private static final String[] SPOTIFY_SCOPES = new String[] {"app-remote-control",
             "playlist-read-private", "user-library-read", "user-library-modify",
             "user-read-playback-position" };
 
 
     // Spotify connection variables
-    private String spotifyAccessCode;
+    private String spotifyAccessToken;
     private SpotifyAppRemote spotifyAppRemote;
 
     // Now playing UI elements and polling timer
@@ -110,25 +112,29 @@ public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickL
 
         // Connect to Spotify
         AuthorizationRequest.Builder builder = new AuthorizationRequest.Builder(CLIENT_ID,
-                AuthorizationResponse.Type.CODE, REDIRECT_URI);
+                AuthorizationResponse.Type.TOKEN, REDIRECT_URI);
         builder.setScopes(SPOTIFY_SCOPES);
         AuthorizationRequest request = builder.build();
-        AuthorizationClient.openLoginActivity(this, REQUEST_CODE, request);
+        AuthorizationClient.openLoginActivity(this, SPOTIFY_REQUEST_CODE, request);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 
+        Log.d(TAG, "onActivityResult: " + requestCode);
+
         // Check if result comes from the correct activity
-        if (requestCode == REQUEST_CODE) {
+        if (requestCode == SPOTIFY_REQUEST_CODE) {
             AuthorizationResponse response = AuthorizationClient.getResponse(resultCode, intent);
 
             switch (response.getType()) {
                 // Response was successful and contains auth token
+                case TOKEN:
                 case CODE:
-                    spotifyAccessCode = response.getCode();
-                    Log.d(TAG, "Spotify Access Code: " + spotifyAccessCode);
+                    spotifyAccessToken = response.getAccessToken();
+                    Log.d(TAG, "Spotify Access token: " + spotifyAccessToken);
+                    Log.d(TAG, "onActivityResult: access code/token expires: " + response.getExpiresIn());
                     connectToSpotifyAppRemote();
                     break;
 
@@ -141,6 +147,9 @@ public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickL
                 // Most likely auth flow was cancelled
                 default:
             }
+        } else if (requestCode == NAVIGATION_REQUEST_CODE) {
+            Log.d(TAG, "onActivityResult: restart now playing stopwatch");
+            connectToSpotifyAppRemote();
         }
     }
 
@@ -173,6 +182,7 @@ public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickL
 
     @Override
     public void onTick(Stopwatch stopwatch) {
+        Log.d(TAG, "onTick: getting playerState");
         spotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(
             new CallResult.ResultCallback<PlayerState>() {
                 @Override
@@ -185,8 +195,13 @@ public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickL
     @Override
     protected void onStop() {
         super.onStop();
+        Log.d(TAG, "onStop: disconnecting from app remote and stopping stopwatch");
         SpotifyAppRemote.disconnect(spotifyAppRemote);
-        stopwatch.stop();
+        spotifyAppRemote = null;
+        if (stopwatch != null) {
+            stopwatch.stop();
+            stopwatch = null;
+        }
     }
 
     @Override
@@ -219,9 +234,10 @@ public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickL
     }
 
     private void selectCurrentItem() {
-//        Intent intent = new Intent(this, currentSelection.getActivityClass());
-        Intent intent = new Intent(this, NowPlayingActivity.class);
-        startActivity(intent);
+        Intent intent = new Intent(this, currentSelection.getActivityClass());
+        intent.putExtra(SPOTIFY_TOKEN_EXTRA, spotifyAccessToken);
+//        Intent intent = new Intent(this, NowPlayingActivity.class);
+        startActivityForResult(intent, NAVIGATION_REQUEST_CODE);
     }
 
     @Override

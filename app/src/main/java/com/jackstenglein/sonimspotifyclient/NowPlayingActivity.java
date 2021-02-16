@@ -1,10 +1,12 @@
 package com.jackstenglein.sonimspotifyclient;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -12,9 +14,50 @@ import com.spotify.protocol.client.CallResult;
 import com.spotify.protocol.types.LibraryState;
 import com.spotify.protocol.types.PlayerState;
 import com.yashovardhan99.timeit.Stopwatch;
+import java.util.HashMap;
 
 public class NowPlayingActivity extends AppCompatActivity implements Stopwatch.OnTickListener,
         View.OnClickListener {
+
+    private enum SelectableItem {
+        Shuffle(R.id.shuffleButton),
+        Previous(R.id.previousButton),
+        Play(R.id.playButton),
+        Next(R.id.nextButton),
+        Like(R.id.likeButton);
+
+        private final int viewID;
+
+        SelectableItem(int viewID) {
+            this.viewID = viewID;
+        }
+
+        SelectableItem previousItem() {
+            switch (this) {
+                case Shuffle: return Like;
+                case Previous: return Shuffle;
+                case Play: return Previous;
+                case Next: return Play;
+                case Like: return Next;
+            }
+            return null;
+        }
+
+        SelectableItem nextItem() {
+            switch (this) {
+                case Shuffle: return Previous;
+                case Previous: return Play;
+                case Play: return Next;
+                case Next: return Like;
+                case Like: return Shuffle;
+            }
+            return null;
+        }
+
+        int getViewID() {
+            return viewID;
+        }
+    }
 
     private static final String TAG = "NowPlayingActivity";
 
@@ -27,10 +70,10 @@ public class NowPlayingActivity extends AppCompatActivity implements Stopwatch.O
     private LibraryState currentLibraryState;
 
     // UI elements for player controls
-    private ImageView shuffleButton;
-    private ImageView previousButton;
+//    private SelectableItem currentSelection;
+//    private Drawable selectedBackground;
+    private final HashMap<SelectableItem, View> selectableViews = new HashMap<>();
     private ImageView playButton;
-    private ImageView nextButton;
     private ImageView likeButton;
 
     @Override
@@ -38,16 +81,16 @@ public class NowPlayingActivity extends AppCompatActivity implements Stopwatch.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.now_playing_activity);
 
-        shuffleButton = findViewById(R.id.shuffleButton);
-        previousButton = findViewById(R.id.previousButton);
+//        selectedBackground = ContextCompat.getDrawable(this, R.drawable.selected_item);
+//        currentSelection = SelectableItem.Shuffle;
+        for (SelectableItem item : SelectableItem.values()) {
+            View view = findViewById(item.getViewID());
+            assert(view != null);
+            selectableViews.put(item, view);
+            view.setOnClickListener(this);
+        }
         playButton = findViewById(R.id.playButton);
-        nextButton =  findViewById(R.id.nextButton);
         likeButton = findViewById(R.id.likeButton);
-        shuffleButton.setOnClickListener(this);
-        previousButton.setOnClickListener(this);
-        playButton.setOnClickListener(this);
-        nextButton.setOnClickListener(this);
-        likeButton.setOnClickListener(this);
 
         // Connect to Spotify
         ConnectionParams connectionParams = new ConnectionParams.Builder(HomeActivity.CLIENT_ID)
@@ -66,6 +109,16 @@ public class NowPlayingActivity extends AppCompatActivity implements Stopwatch.O
                 Log.e(TAG, throwable.getMessage(), throwable);
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop: disconnectiong from app remote and stopping stopwatch");
+        SpotifyAppRemote.disconnect(spotifyAppRemote);
+        if (stopwatch != null) {
+            stopwatch.stop();
+        }
     }
 
     private void subscribeToPlayerState() {
@@ -119,31 +172,112 @@ public class NowPlayingActivity extends AppCompatActivity implements Stopwatch.O
 
     @Override
     public void onClick(View view) {
-        if (view.equals(shuffleButton)) {
+        if (view.getId() == R.id.shuffleButton) {
             handleShuffleClick();
-        } else if (view.equals(previousButton)) {
+        } else if (view.getId() == R.id.previousButton) {
             handlePreviousClick();
         } else if (view.equals(playButton)) {
             handlePlayClick();
-        } else if (view.equals(nextButton)) {
+        } else if (view.getId() == R.id.nextButton) {
             handleNextClick();
         } else if (view.equals(likeButton)) {
             handleLikeClick();
         }
     }
 
+//    @Override
+//    public boolean dispatchKeyEvent(KeyEvent keyEvent) {
+//        Log.d(TAG, "dispatchKeyEvent: " + keyEvent);
+//
+//        if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+//            int keyCode = keyEvent.getKeyCode();
+//            if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
+//                selectCurrentItem();
+//                return true;
+//            }
+//
+//            if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT || keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+//                updateSelectedItem(keyCode);
+//                return true;
+//            }
+//        }
+//
+//        return super.dispatchKeyEvent(keyEvent);
+//    }
+//
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
+//        Log.d(TAG, "onKeyDown: " + keyCode);
+//
+//        if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT || keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+//            updateSelectedItem(keyCode);
+//            return true;
+//        }
+//
+//        if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
+//            selectCurrentItem();
+//            return true;
+//        }
+//
+//        return super.onKeyDown(keyCode, keyEvent);
+//    }
+
+//    private void updateSelectedItem(int keyCode) {
+//        View currentView = selectableViews.get(currentSelection);
+//        Log.d(TAG, "updateSelectedItem: setting background to null for view: " + currentView);
+//        selectableViews.get(currentSelection).setBackground(null);
+//
+//        if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+//            Log.d(TAG, "updateSelectedItem: getting previous item");
+//            currentSelection = currentSelection.previousItem();
+//        } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+//            Log.d(TAG, "updateSelectedItem: getting next item");
+//            currentSelection = currentSelection.nextItem();
+//        }
+//
+//        currentView = selectableViews.get(currentSelection);
+//        selectableViews.get(currentSelection).setBackground(selectedBackground);
+//        Log.d(TAG, "updateSelectedItem: setting selected background for view: " + currentView);
+//    }
+//
+//    private void selectCurrentItem() {
+//        switch (currentSelection) {
+//            case Shuffle:
+//                handleShuffleClick();
+//                break;
+//            case Previous:
+//                handlePreviousClick();
+//                break;
+//            case Play:
+//                handlePlayClick();
+//                break;
+//            case Next:
+//                handleNextClick();
+//                break;
+//            case Like:
+//                handleLikeClick();
+//                break;
+//        }
+//    }
+
     private void handleShuffleClick() {
         Log.d(TAG, "handleShuffleClick");
-        spotifyAppRemote.getPlayerApi().toggleShuffle();
+        if (spotifyAppRemote != null) {
+            spotifyAppRemote.getPlayerApi().toggleShuffle();
+        }
     }
 
     private void handlePreviousClick() {
         Log.d(TAG, "handlePreviousClick");
-        spotifyAppRemote.getPlayerApi().skipPrevious();
+        if (spotifyAppRemote != null) {
+            spotifyAppRemote.getPlayerApi().skipPrevious();
+        }
     }
 
     private void handlePlayClick() {
         Log.d(TAG, "handlePlayClick");
+        if (spotifyAppRemote == null || currentPlayerState == null) return;
+
         if (currentPlayerState.isPaused) {
             spotifyAppRemote.getPlayerApi().resume();
         } else {
@@ -153,12 +287,14 @@ public class NowPlayingActivity extends AppCompatActivity implements Stopwatch.O
 
     private void handleNextClick() {
         Log.d(TAG, "handleNextClick");
-        spotifyAppRemote.getPlayerApi().skipNext();
+        if (spotifyAppRemote != null) {
+            spotifyAppRemote.getPlayerApi().skipNext();
+        }
     }
 
     private void handleLikeClick() {
         Log.d(TAG, "handleLikeClick");
-        if (currentLibraryState == null) return;
+        if (spotifyAppRemote == null || currentLibraryState == null) return;
 
         if (currentLibraryState.isAdded) {
             spotifyAppRemote.getUserApi().removeFromLibrary(currentLibraryState.uri);

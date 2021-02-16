@@ -9,6 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/searchContainer"
         android:background="@drawable/selected_item"
+        android:focusable="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent">
@@ -35,6 +36,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/playlistContainer"
+        android:focusable="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/separator0">
@@ -61,6 +63,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/likedSongsContainer"
+        android:focusable="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/separator1">
@@ -79,6 +82,7 @@
 
     <View
         android:id="@+id/separator2"
+        android:focusable="false"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"
@@ -87,6 +91,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/followedPodcastsContainer"
+        android:focusable="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/separator2">
@@ -113,6 +118,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/nowPlayingContainer"
+        android:focusable="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/separator3">
@@ -139,6 +145,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/nowPlayingInfoContainer"
+        android:focusable="false"
         android:visibility="invisible"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
