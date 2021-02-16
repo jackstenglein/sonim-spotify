@@ -1,7 +1,6 @@
-package com.jackstenglein.sonimspotifyclient.likedsongs;
+package com.jackstenglein.sonimspotifyclient.list;
 
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import kaaes.spotify.webapi.android.models.Pager;
 
-public class LikedSongsAdapter<T> extends RecyclerView.Adapter<LikedSongsAdapter.ViewHolder<T>> {
+public class PagerAdapter<T> extends RecyclerView.Adapter<PagerAdapter.ViewHolder<T>> {
 
-    interface LikedSongsDataSource<T> {
+    public interface DataSource<T> {
         void getNextPage(Pager<T> pager);
         String getPrimaryText(T track);
         String getSecondaryText(T track);
@@ -26,12 +25,12 @@ public class LikedSongsAdapter<T> extends RecyclerView.Adapter<LikedSongsAdapter
 
     static class ViewHolder<T> extends RecyclerView.ViewHolder {
 
-        private final LikedSongsDataSource<T> dataSource;
+        private final DataSource<T> dataSource;
         private final View itemContainer;
         private final TextView primaryText;
         private final TextView secondaryText;
 
-        private ViewHolder(View itemView, LikedSongsDataSource<T> dataSource) {
+        private ViewHolder(View itemView, DataSource<T> dataSource) {
             super(itemView);
             this.dataSource = dataSource;
             itemContainer = itemView.findViewById(R.id.primarySecondaryListItemContainer);
@@ -42,7 +41,6 @@ public class LikedSongsAdapter<T> extends RecyclerView.Adapter<LikedSongsAdapter
         private void bind(T item, Drawable background) {
             primaryText.setText(dataSource.getPrimaryText(item));
             secondaryText.setText(dataSource.getSecondaryText(item));
-            Log.d("Background test", "bind: Setting background to " + background);
             itemContainer.setBackground(background);
         }
     }
@@ -51,7 +49,7 @@ public class LikedSongsAdapter<T> extends RecyclerView.Adapter<LikedSongsAdapter
     private static final int SCROLL_UP_INDEX = 5;
     private static final int SCROLL_DOWN_INDEX = 4;
 
-    private final LikedSongsDataSource<T> dataSource;
+    private final DataSource<T> dataSource;
     private final LinearLayoutManager layoutManager;
     private Drawable selectedBackground;
     private int selectedItem;
@@ -59,15 +57,14 @@ public class LikedSongsAdapter<T> extends RecyclerView.Adapter<LikedSongsAdapter
     private boolean requestPending;
     private Pager<T> lastPage;
 
-    private LikedSongsAdapter(LikedSongsDataSource<T> dataSource,
-                              LinearLayoutManager layoutManager) {
+    private PagerAdapter(DataSource<T> dataSource, LinearLayoutManager layoutManager) {
         this.dataSource = dataSource;
         this.layoutManager = layoutManager;
     }
 
-    public static <T> LikedSongsAdapter<T> create(LikedSongsDataSource<T> dataSource,
-                                                  LinearLayoutManager layoutManager) {
-        return new LikedSongsAdapter<>(dataSource, layoutManager);
+    public static <T> PagerAdapter<T> create(DataSource<T> dataSource,
+                                             LinearLayoutManager layoutManager) {
+        return new PagerAdapter<>(dataSource, layoutManager);
     }
 
     public void addPage(Pager<T> page) {

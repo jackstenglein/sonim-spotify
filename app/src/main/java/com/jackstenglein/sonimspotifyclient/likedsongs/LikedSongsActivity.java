@@ -10,12 +10,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.jackstenglein.sonimspotifyclient.HomeActivity;
 import com.jackstenglein.sonimspotifyclient.R;
+import com.jackstenglein.sonimspotifyclient.list.PagerAdapter;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
-import com.spotify.protocol.client.CallResult;
-import com.spotify.protocol.types.Capabilities;
-import com.spotify.protocol.types.Empty;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -28,12 +26,12 @@ import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.SavedTrack;
 import retrofit.client.Response;
 
-public class LikedSongsActivity extends AppCompatActivity implements LikedSongsAdapter.LikedSongsDataSource<SavedTrack> {
+public class LikedSongsActivity extends AppCompatActivity implements PagerAdapter.DataSource<SavedTrack> {
 
     private static final String TAG = "LikedSongsActivity";
     private static final String ARTIST_NAME_AND_DURATION_FORMAT = "%s • %d:%02d";
 
-    private LikedSongsAdapter<SavedTrack> adapter;
+    private PagerAdapter<SavedTrack> adapter;
     private SpotifyService spotifyWebApi;
     private SpotifyAppRemote spotifyAppRemote;
 
@@ -45,7 +43,7 @@ public class LikedSongsActivity extends AppCompatActivity implements LikedSongsA
         RecyclerView songsList = findViewById(R.id.primarySecondaryList);
         songsList.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        adapter = LikedSongsAdapter.create(this, layoutManager);
+        adapter = PagerAdapter.create(this, layoutManager);
         songsList.setAdapter(adapter);
         songsList.setLayoutManager(layoutManager);
 
