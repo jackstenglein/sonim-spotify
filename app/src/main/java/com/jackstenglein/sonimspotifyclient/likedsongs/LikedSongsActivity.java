@@ -10,6 +10,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.jackstenglein.sonimspotifyclient.HomeActivity;
 import com.jackstenglein.sonimspotifyclient.R;
+import com.spotify.android.appremote.api.ConnectionParams;
+import com.spotify.android.appremote.api.Connector;
+import com.spotify.android.appremote.api.SpotifyAppRemote;
+import com.spotify.protocol.client.CallResult;
+import com.spotify.protocol.types.Capabilities;
+import com.spotify.protocol.types.Empty;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -28,7 +34,8 @@ public class LikedSongsActivity extends AppCompatActivity implements LikedSongsA
     private static final String ARTIST_NAME_AND_DURATION_FORMAT = "%s • %d:%02d";
 
     private LikedSongsAdapter<SavedTrack> adapter;
-    private SpotifyService spotify;
+    private SpotifyService spotifyWebApi;
+    private SpotifyAppRemote spotifyAppRemote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,16 +49,36 @@ public class LikedSongsActivity extends AppCompatActivity implements LikedSongsA
         songsList.setAdapter(adapter);
         songsList.setLayoutManager(layoutManager);
 
-        SpotifyApi api = new SpotifyApi();
-        api.setAccessToken(getIntent().getStringExtra(HomeActivity.SPOTIFY_TOKEN_EXTRA));
-        spotify = api.getService();
-        getSpotifyTracks(0);
+        connectToSpotifyAppRemote();
+    }
+
+    private void connectToSpotifyAppRemote() {
+        ConnectionParams connectionParams = new ConnectionParams.Builder(HomeActivity.CLIENT_ID)
+                .setRedirectUri(HomeActivity.REDIRECT_URI).showAuthView(false).build();
+        SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener(){
+
+            @Override
+            public void onConnected(SpotifyAppRemote remote) {
+                spotifyAppRemote = remote;
+                Log.d(TAG, "Connected to spotify app remote");
+
+                SpotifyApi api = new SpotifyApi();
+                api.setAccessToken(getIntent().getStringExtra(HomeActivity.SPOTIFY_TOKEN_EXTRA));
+                spotifyWebApi = api.getService();
+                getSpotifyTracks(0);
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                Log.e(TAG, throwable.getMessage(), throwable);
+            }
+        });
     }
 
     private void getSpotifyTracks(int offset) {
         HashMap<String, Object> queryParams = new HashMap<>();
         queryParams.put("offset", offset);
-        spotify.getMySavedTracks(queryParams, new SpotifyCallback<Pager<SavedTrack>>() {
+        spotifyWebApi.getMySavedTracks(queryParams, new SpotifyCallback<Pager<SavedTrack>>() {
             @Override
             public void failure(SpotifyError spotifyError) {
                 Log.e(TAG, "failure to get saved tracks: " + spotifyError.getErrorDetails().message, spotifyError);
@@ -74,6 +101,12 @@ public class LikedSongsActivity extends AppCompatActivity implements LikedSongsA
         }
 
         if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER) {
+            SavedTrack savedTrack = adapter.getSelectedItem();
+            if (savedTrack != null && spotifyAppRemote != null) {
+                Log.d(TAG, "playing " + savedTrack.track.name + " with URI: " +
+                        savedTrack.track.uri);
+                spotifyAppRemote.getPlayerApi().play(savedTrack.track.uri);
+            }
             return true;
         }
 
