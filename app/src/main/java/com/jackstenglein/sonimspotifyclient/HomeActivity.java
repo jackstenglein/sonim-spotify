@@ -11,6 +11,7 @@ import android.view.View;
 import java.util.HashMap;
 import com.jackstenglein.sonimspotifyclient.likedsongs.LikedSongsActivity;
 import com.jackstenglein.sonimspotifyclient.playlists.PlaylistsActivity;
+import com.jackstenglein.sonimspotifyclient.podcasts.FollowedPodcastsActivity;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;

@@ -1,16 +1,13 @@
 package com.jackstenglein.sonimspotifyclient.likedsongs;
 
 import android.util.Log;
-import com.jackstenglein.sonimspotifyclient.list.AbstractListActivity;
+import com.jackstenglein.sonimspotifyclient.list.AbstractDefaultListActivity;
 import java.util.HashMap;
 import java.util.Locale;
-import kaaes.spotify.webapi.android.SpotifyCallback;
-import kaaes.spotify.webapi.android.SpotifyError;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.SavedTrack;
-import retrofit.client.Response;
 
-public class LikedSongsActivity extends AbstractListActivity<SavedTrack> {
+public class LikedSongsActivity extends AbstractDefaultListActivity<SavedTrack> {
 
     private static final String TAG = "LikedSongsActivity";
     private static final String ARTIST_NAME_AND_DURATION_FORMAT = "%s • %d:%02d";
@@ -44,18 +41,7 @@ public class LikedSongsActivity extends AbstractListActivity<SavedTrack> {
     private void getSpotifyTracks(int offset) {
         HashMap<String, Object> queryParams = new HashMap<>();
         queryParams.put("offset", offset);
-        spotifyWebApi.getMySavedTracks(queryParams, new SpotifyCallback<Pager<SavedTrack>>() {
-            @Override
-            public void failure(SpotifyError spotifyError) {
-                Log.e(TAG, "failure to get saved tracks: " + spotifyError.getErrorDetails(),
-                        spotifyError);
-            }
-
-            @Override
-            public void success(Pager<SavedTrack> savedTrackPager, Response response) {
-                adapter.addPage(savedTrackPager);
-            }
-        });
+        spotifyWebApi.getMySavedTracks(queryParams, getDefaultSpotifyCallback());
     }
 
     @Override

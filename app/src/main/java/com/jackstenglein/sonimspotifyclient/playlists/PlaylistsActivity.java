@@ -1,15 +1,12 @@
 package com.jackstenglein.sonimspotifyclient.playlists;
 
 import android.util.Log;
-import com.jackstenglein.sonimspotifyclient.list.AbstractListActivity;
+import com.jackstenglein.sonimspotifyclient.list.AbstractDefaultListActivity;
 import java.util.HashMap;
-import kaaes.spotify.webapi.android.SpotifyCallback;
-import kaaes.spotify.webapi.android.SpotifyError;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
-import retrofit.client.Response;
 
-public class PlaylistsActivity extends AbstractListActivity<PlaylistSimple> {
+public class PlaylistsActivity extends AbstractDefaultListActivity<PlaylistSimple> {
 
     private static final String TAG = "PlaylistsActivity";
 
@@ -41,18 +38,7 @@ public class PlaylistsActivity extends AbstractListActivity<PlaylistSimple> {
     private void getSpotifyPlaylists(int offset) {
         HashMap<String, Object> queryParams = new HashMap<>();
         queryParams.put("offset", offset);
-        spotifyWebApi.getMyPlaylists(queryParams, new SpotifyCallback<Pager<PlaylistSimple>>() {
-            @Override
-            public void failure(SpotifyError spotifyError) {
-                Log.e(TAG, "failure to get playlists: " + spotifyError.getErrorDetails(),
-                        spotifyError);
-            }
-
-            @Override
-            public void success(Pager<PlaylistSimple> playlistSimplePager, Response response) {
-                adapter.addPage(playlistSimplePager);
-            }
-        });
+        spotifyWebApi.getMyPlaylists(queryParams, getDefaultSpotifyCallback());
     }
 
     @Override

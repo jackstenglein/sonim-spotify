@@ -11,16 +11,19 @@ import com.jackstenglein.sonimspotifyclient.R;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
-import kaaes.spotify.webapi.android.SpotifyApi;
-import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.SpotifyCallback;
+import kaaes.spotify.webapi.android.SpotifyError;
+import kaaes.spotify.webapi.android.models.Pager;
+import retrofit.client.Response;
 
-public abstract class AbstractListActivity<T> extends AppCompatActivity implements PagerAdapter.DataSource<T> {
+public abstract class AbstractListActivity<T, K> extends AppCompatActivity implements PagerAdapter.DataSource<T> {
 
     protected abstract String getTag();
     protected abstract void handleSelection(T item);
+    protected abstract K getSpotifyWebApi();
 
     protected PagerAdapter<T> adapter;
-    protected SpotifyService spotifyWebApi;
+    protected K spotifyWebApi;
     protected SpotifyAppRemote spotifyAppRemote;
 
     @Override
@@ -48,9 +51,7 @@ public abstract class AbstractListActivity<T> extends AppCompatActivity implemen
                 spotifyAppRemote = remote;
                 Log.d(getTag(), "Connected to spotify app remote");
 
-                SpotifyApi api = new SpotifyApi();
-                api.setAccessToken(getIntent().getStringExtra(HomeActivity.SPOTIFY_TOKEN_EXTRA));
-                spotifyWebApi = api.getService();
+                spotifyWebApi = getSpotifyWebApi();
                 getNextPage(null);
             }
 
@@ -59,6 +60,20 @@ public abstract class AbstractListActivity<T> extends AppCompatActivity implemen
                 Log.e(getTag(), throwable.getMessage(), throwable);
             }
         });
+    }
+
+    protected SpotifyCallback<Pager<T>> getDefaultSpotifyCallback() {
+        return new SpotifyCallback<Pager<T>>() {
+            @Override
+            public void failure(SpotifyError spotifyError) {
+                Log.e(getTag(), "failure: " + spotifyError.getErrorDetails(), spotifyError);
+            }
+
+            @Override
+            public void success(Pager<T> tPager, Response response) {
+                adapter.addPage(tPager);
+            }
+        };
     }
 
     @Override
