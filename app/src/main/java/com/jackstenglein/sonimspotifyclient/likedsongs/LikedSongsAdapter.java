@@ -1,58 +1,86 @@
 package com.jackstenglein.sonimspotifyclient.likedsongs;
 
+import android.graphics.drawable.Drawable;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jackstenglein.sonimspotifyclient.R;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-import kaaes.spotify.webapi.android.models.SavedTrack;
-import kaaes.spotify.webapi.android.models.Track;
+import kaaes.spotify.webapi.android.models.Pager;
 
-public class LikedSongsAdapter extends RecyclerView.Adapter<LikedSongsAdapter.ViewHolder> {
+public class LikedSongsAdapter<T> extends RecyclerView.Adapter<LikedSongsAdapter.ViewHolder<T>> {
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    interface LikedSongsDataSource<T> {
+        void getNextPage(Pager<T> pager);
+        String getPrimaryText(T track);
+        String getSecondaryText(T track);
+    }
 
-        private static final String ARTIST_NAME_AND_DURATION_FORMAT = "%s • %d:%02d";
+    static class ViewHolder<T> extends RecyclerView.ViewHolder {
 
 
-        private final TextView songName;
-        private final TextView artistNameAndDuration;
+        private final LikedSongsDataSource<T> dataSource;
+        private final View itemContainer;
+        private final TextView primaryText;
+        private final TextView secondaryText;
 
-        private ViewHolder(View itemView) {
+        private ViewHolder(View itemView, LikedSongsDataSource<T> dataSource) {
             super(itemView);
-            songName = itemView.findViewById(R.id.primaryText);
-            artistNameAndDuration = itemView.findViewById(R.id.secondaryText);
+            this.dataSource = dataSource;
+            itemContainer = itemView.findViewById(R.id.primarySecondaryListItemContainer);
+            primaryText = itemView.findViewById(R.id.primaryText);
+            secondaryText = itemView.findViewById(R.id.secondaryText);
         }
 
-        private void bind(String songTitle, String artistName, long duration) {
-            songName.setText(songTitle);
-            artistNameAndDuration.setText(String.format(Locale.getDefault(),
-                    ARTIST_NAME_AND_DURATION_FORMAT, artistName, getMinutes(duration),
-                    getSeconds(duration)));
-        }
-
-        private long getMinutes(long duration) {
-            return (duration / 1000) / 60;
-        }
-
-        private long getSeconds(long duration) {
-            return (duration / 1000) % 60;
+        private void bind(T item, Drawable background) {
+            primaryText.setText(dataSource.getPrimaryText(item));
+            secondaryText.setText(dataSource.getSecondaryText(item));
+            Log.d("Background test", "bind: Setting background to " + background);
+            itemContainer.setBackground(background);
         }
     }
 
-    private List<SavedTrack> savedTracks = new ArrayList<>();
+    private final LikedSongsDataSource<T> dataSource;
+    private Drawable selectedBackground;
+    private int selectedItem;
+    private final List<T> items = new ArrayList<>();
+    private Pager<T> lastPage;
 
-    public void setSavedTracks(List<SavedTrack> savedTracks) {
-        this.savedTracks = new ArrayList<>(savedTracks);
+    private LikedSongsAdapter(LikedSongsDataSource<T> dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public static <T> LikedSongsAdapter<T> create(LikedSongsDataSource<T> dataSource) {
+        return new LikedSongsAdapter<>(dataSource);
+    }
+
+    public void addPage(Pager<T> page) {
+        items.addAll(page.items);
+        lastPage = page;
+        notifyDataSetChanged();
+    }
+
+    public void updateSelection(int keyCode) {
+        if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+            if (selectedItem > 0) {
+                selectedItem--;
+            }
+        } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+            if (selectedItem < items.size() - 1) {
+                selectedItem++;
+            }
+        }
         notifyDataSetChanged();
     }
 
@@ -60,17 +88,19 @@ public class LikedSongsAdapter extends RecyclerView.Adapter<LikedSongsAdapter.Vi
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView  = LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.primary_secondary_list_item, parent, false);
-        return new ViewHolder(itemView);
+        selectedBackground = ContextCompat.getDrawable(parent.getContext(),
+                R.drawable.selected_item);
+        return new ViewHolder(itemView, dataSource);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Track track = savedTracks.get(position).track;
-        holder.bind(track.name, track.artists.get(0).name, track.duration_ms);
+        Drawable background = (position == selectedItem) ? selectedBackground : null;
+        holder.bind(items.get(position), background);
     }
 
     @Override
     public int getItemCount() {
-        return savedTracks.size();
+        return items.size();
     }
 }

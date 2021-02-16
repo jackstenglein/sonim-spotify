@@ -3,14 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/primarySecondaryListItemContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@drawable/selectable_item_background">
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/primaryText"
-        android:focusable="false"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_default"
@@ -24,7 +23,6 @@
 
     <TextView
         android:id="@+id/secondaryText"
-        android:focusable="false"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_list_rows"
@@ -38,7 +36,6 @@
         tools:text="Secondary Text • Ternary Text" />
 
     <View
-        android:focusable="false"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"
