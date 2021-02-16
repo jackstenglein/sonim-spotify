@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import java.util.HashMap;
+
+import com.jackstenglein.sonimspotifyclient.likedsongs.LikedSongsActivity;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -182,7 +184,7 @@ public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickL
 
     @Override
     public void onTick(Stopwatch stopwatch) {
-        Log.d(TAG, "onTick: getting playerState");
+//        Log.d(TAG, "onTick: getting playerState");
         spotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(
             new CallResult.ResultCallback<PlayerState>() {
                 @Override
@@ -234,9 +236,10 @@ public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickL
     }
 
     private void selectCurrentItem() {
-        Intent intent = new Intent(this, currentSelection.getActivityClass());
+//        Intent intent = new Intent(this, currentSelection.getActivityClass());
+        Intent intent = new Intent(this, LikedSongsActivity.class);
+
         intent.putExtra(SPOTIFY_TOKEN_EXTRA, spotifyAccessToken);
-//        Intent intent = new Intent(this, NowPlayingActivity.class);
         startActivityForResult(intent, NAVIGATION_REQUEST_CODE);
     }
 

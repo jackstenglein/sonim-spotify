@@ -4,10 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:focusable="false">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/playlistList"
+        android:id="@+id/primarySecondaryList"
+        android:focusable="false"
         android:layout_width="0dp"
         android:layout_height="0dp"
         tools:listitem="@layout/primary_secondary_list_item"
