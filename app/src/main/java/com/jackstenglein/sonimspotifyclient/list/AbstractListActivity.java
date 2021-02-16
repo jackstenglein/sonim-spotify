@@ -77,4 +77,11 @@ public abstract class AbstractListActivity<T> extends AppCompatActivity implemen
 
         return super.onKeyDown(keyCode, keyEvent);
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SpotifyAppRemote.disconnect(spotifyAppRemote);
+        spotifyAppRemote = null;
+    }
 }

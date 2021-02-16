@@ -19,8 +19,8 @@ public class PagerAdapter<T> extends RecyclerView.Adapter<PagerAdapter.ViewHolde
 
     public interface DataSource<T> {
         void getNextPage(Pager<T> pager);
-        String getPrimaryText(T track);
-        String getSecondaryText(T track);
+        String getPrimaryText(T item);
+        String getSecondaryText(T item);
     }
 
     static class ViewHolder<T> extends RecyclerView.ViewHolder {

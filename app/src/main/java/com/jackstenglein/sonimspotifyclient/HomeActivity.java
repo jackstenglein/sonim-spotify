@@ -9,8 +9,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import java.util.HashMap;
-
 import com.jackstenglein.sonimspotifyclient.likedsongs.LikedSongsActivity;
+import com.jackstenglein.sonimspotifyclient.playlists.PlaylistsActivity;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -236,9 +236,7 @@ public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickL
     }
 
     private void selectCurrentItem() {
-//        Intent intent = new Intent(this, currentSelection.getActivityClass());
-        Intent intent = new Intent(this, LikedSongsActivity.class);
-
+        Intent intent = new Intent(this, currentSelection.getActivityClass());
         intent.putExtra(SPOTIFY_TOKEN_EXTRA, spotifyAccessToken);
         startActivityForResult(intent, NAVIGATION_REQUEST_CODE);
     }

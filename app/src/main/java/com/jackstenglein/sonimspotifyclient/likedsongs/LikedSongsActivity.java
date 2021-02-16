@@ -2,7 +2,6 @@ package com.jackstenglein.sonimspotifyclient.likedsongs;
 
 import android.util.Log;
 import com.jackstenglein.sonimspotifyclient.list.AbstractListActivity;
-import com.jackstenglein.sonimspotifyclient.list.PagerAdapter;
 import java.util.HashMap;
 import java.util.Locale;
 import kaaes.spotify.webapi.android.SpotifyCallback;
@@ -11,7 +10,7 @@ import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.SavedTrack;
 import retrofit.client.Response;
 
-public class LikedSongsActivity extends AbstractListActivity<SavedTrack> implements PagerAdapter.DataSource<SavedTrack> {
+public class LikedSongsActivity extends AbstractListActivity<SavedTrack> {
 
     private static final String TAG = "LikedSongsActivity";
     private static final String ARTIST_NAME_AND_DURATION_FORMAT = "%s • %d:%02d";
@@ -48,8 +47,8 @@ public class LikedSongsActivity extends AbstractListActivity<SavedTrack> impleme
         spotifyWebApi.getMySavedTracks(queryParams, new SpotifyCallback<Pager<SavedTrack>>() {
             @Override
             public void failure(SpotifyError spotifyError) {
-                Log.e(TAG, "failure to get saved tracks: " +
-                        spotifyError.getErrorDetails().message, spotifyError);
+                Log.e(TAG, "failure to get saved tracks: " + spotifyError.getErrorDetails(),
+                        spotifyError);
             }
 
             @Override

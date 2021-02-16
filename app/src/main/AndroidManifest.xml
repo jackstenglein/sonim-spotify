@@ -16,10 +16,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".SearchActivity" />
-        <activity android:name=".PlaylistsActivity" />
         <activity android:name=".likedsongs.LikedSongsActivity" />
         <activity android:name=".FollowedPodcastsActivity" />
         <activity android:name=".NowPlayingActivity" />
+        <activity android:name=".playlists.PlaylistsActivity" />
         <activity android:name="com.spotify.sdk.android.auth.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     </application>
