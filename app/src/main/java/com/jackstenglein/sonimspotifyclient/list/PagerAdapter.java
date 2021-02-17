@@ -18,6 +18,7 @@ import kaaes.spotify.webapi.android.models.Pager;
 public class PagerAdapter<T> extends RecyclerView.Adapter<PagerAdapter.ViewHolder<T>> {
 
     public interface DataSource<T> {
+        boolean shouldHideSelection();
         void getNextPage(Pager<T> pager);
         String getPrimaryText(T item);
         String getSecondaryText(T item);
@@ -68,6 +69,14 @@ public class PagerAdapter<T> extends RecyclerView.Adapter<PagerAdapter.ViewHolde
         return new PagerAdapter<>(dataSource, layoutManager);
     }
 
+    public void clear() {
+        items.clear();
+        lastPage = null;
+        requestPending = false;
+        selectedItem = 0;
+        notifyDataSetChanged();
+    }
+
     public void addPage(Pager<T> page) {
         items.addAll(page.items);
         lastPage = page;
@@ -79,6 +88,8 @@ public class PagerAdapter<T> extends RecyclerView.Adapter<PagerAdapter.ViewHolde
         if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
             if (selectedItem > 0) {
                 selectedItem--;
+            } else if (selectedItem == 0 && dataSource.shouldHideSelection()) {
+                selectedItem = -1;
             }
             scrollPageDownIfNecessary();
         } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
@@ -125,7 +136,7 @@ public class PagerAdapter<T> extends RecyclerView.Adapter<PagerAdapter.ViewHolde
                 R.layout.primary_secondary_list_item, parent, false);
         selectedBackground = ContextCompat.getDrawable(parent.getContext(),
                 R.drawable.selected_item);
-        return new ViewHolder(itemView, dataSource);
+        return new ViewHolder<>(itemView, dataSource);
     }
 
     @Override

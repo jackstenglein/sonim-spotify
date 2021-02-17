@@ -33,6 +33,11 @@ public class FollowedPodcastsActivity extends AbstractEpisodeListActivity<SavedS
     }
 
     @Override
+    public boolean shouldHideSelection() {
+        return false;
+    }
+
+    @Override
     public void getNextPage(Pager<SavedShow> currentPage) {
         if (currentPage == null) {
             getSpotifyShows(0);

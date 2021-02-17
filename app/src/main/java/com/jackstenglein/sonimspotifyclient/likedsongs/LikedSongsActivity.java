@@ -27,6 +27,11 @@ public class LikedSongsActivity extends AbstractDefaultListActivity<SavedTrack> 
     }
 
     @Override
+    public boolean shouldHideSelection() {
+        return false;
+    }
+
+    @Override
     public void getNextPage(Pager<SavedTrack> currentPage) {
         if (currentPage == null) {
             getSpotifyTracks(0);

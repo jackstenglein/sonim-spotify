@@ -12,6 +12,7 @@ import java.util.HashMap;
 import com.jackstenglein.sonimspotifyclient.likedsongs.LikedSongsActivity;
 import com.jackstenglein.sonimspotifyclient.playlists.PlaylistsActivity;
 import com.jackstenglein.sonimspotifyclient.podcasts.FollowedPodcastsActivity;
+import com.jackstenglein.sonimspotifyclient.search.SearchActivity;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -182,8 +183,10 @@ public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickL
 
     @Override
     public void onTick(Stopwatch stopwatch) {
-        spotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(
-                playerState -> nowPlayingUI.update(playerState));
+        if (spotifyAppRemote != null) {
+            spotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(
+                    playerState -> nowPlayingUI.update(playerState));
+        }
     }
 
     @Override

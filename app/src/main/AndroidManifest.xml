@@ -15,7 +15,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SearchActivity" />
+        <activity android:name=".search.SearchActivity" />
         <activity android:name=".likedsongs.LikedSongsActivity" />
         <activity android:name=".podcasts.FollowedPodcastsActivity" />
         <activity android:name=".podcasts.PodcastDetailActivity" />

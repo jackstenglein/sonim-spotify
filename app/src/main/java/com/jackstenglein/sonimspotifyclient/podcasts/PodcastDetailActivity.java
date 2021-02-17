@@ -9,6 +9,8 @@ public class PodcastDetailActivity extends AbstractEpisodeListActivity<SimpleEpi
 
     private static final String TAG = "PodcastDetailActivity";
 
+    private static final String EMPTY_STRING = "";
+
     private static final String RELEASE_PRECISION_YEAR = "year";
     private static final int RELEASE_YEAR_START_INDEX = 0;
     private static final int RELEASE_YEAR_END_INDEX = 4;
@@ -31,6 +33,11 @@ public class PodcastDetailActivity extends AbstractEpisodeListActivity<SimpleEpi
             Log.d(TAG, "playing " + episode.name + " with URI: " + episode.uri);
             spotifyAppRemote.getPlayerApi().play(episode.uri);
         }
+    }
+
+    @Override
+    public boolean shouldHideSelection() {
+        return false;
     }
 
     @Override
@@ -61,7 +68,7 @@ public class PodcastDetailActivity extends AbstractEpisodeListActivity<SimpleEpi
     public String getSecondaryText(SimpleEpisode episode) {
         StringBuilder builder = new StringBuilder();
         String releaseDate = getReleaseDate(episode);
-        if (releaseDate != null) {
+        if ( ! EMPTY_STRING.equals(releaseDate)) {
             builder.append(releaseDate);
             builder.append(" • ");
         }
@@ -74,9 +81,9 @@ public class PodcastDetailActivity extends AbstractEpisodeListActivity<SimpleEpi
         return builder.toString();
     }
 
-    private String getReleaseDate(SimpleEpisode episode) {
+    public static String getReleaseDate(SimpleEpisode episode) {
         if (episode.release_date_precision == null || episode.release_date == null) {
-            return null;
+            return EMPTY_STRING;
         }
 
         if (RELEASE_PRECISION_YEAR.equals(episode.release_date_precision)) {

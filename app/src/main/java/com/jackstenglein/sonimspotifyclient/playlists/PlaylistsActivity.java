@@ -24,6 +24,11 @@ public class PlaylistsActivity extends AbstractDefaultListActivity<PlaylistSimpl
     }
 
     @Override
+    public boolean shouldHideSelection() {
+        return false;
+    }
+
+    @Override
     public void getNextPage(Pager<PlaylistSimple> currentPage) {
         if (currentPage == null) {
             getSpotifyPlaylists(0);

@@ -29,7 +29,7 @@ public abstract class AbstractListActivity<T, K> extends AppCompatActivity imple
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.primary_secondary_list);
+        setContentView(getLayoutId());
 
         RecyclerView songsList = findViewById(R.id.primarySecondaryList);
         songsList.setHasFixedSize(true);
@@ -40,10 +40,14 @@ public abstract class AbstractListActivity<T, K> extends AppCompatActivity imple
 
         if (shouldConnectToSpotifyAppRemote()) {
             connectToSpotifyAppRemote();
-        } else {
+        } else if (shouldFetchImmediately()) {
             spotifyWebApi = getSpotifyWebApi();
             getNextPage(null);
         }
+    }
+
+    protected int getLayoutId() {
+        return R.layout.primary_secondary_list;
     }
 
     protected boolean shouldConnectToSpotifyAppRemote() {
@@ -61,7 +65,9 @@ public abstract class AbstractListActivity<T, K> extends AppCompatActivity imple
                 Log.d(getTag(), "Connected to spotify app remote");
 
                 spotifyWebApi = getSpotifyWebApi();
-                getNextPage(null);
+                if (shouldFetchImmediately()) {
+                    getNextPage(null);
+                }
             }
 
             @Override
@@ -69,6 +75,10 @@ public abstract class AbstractListActivity<T, K> extends AppCompatActivity imple
                 Log.e(getTag(), throwable.getMessage(), throwable);
             }
         });
+    }
+
+    protected boolean shouldFetchImmediately() {
+        return true;
     }
 
     protected SpotifyCallback<Pager<T>> getDefaultSpotifyCallback() {
