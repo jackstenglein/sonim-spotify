@@ -46,7 +46,8 @@ public class PagerAdapter<T> extends RecyclerView.Adapter<PagerAdapter.ViewHolde
     }
 
     private static final int PAGINATION_QUERY_BUFFER = 10;
-    private static final int SCROLL_UP_INDEX = 5;
+    private static final int SCROLL_MOD = 5;
+    private static final int SCROLL_UP_INDEX = 0;
     private static final int SCROLL_DOWN_INDEX = 4;
 
     private final DataSource<T> dataSource;
@@ -91,13 +92,13 @@ public class PagerAdapter<T> extends RecyclerView.Adapter<PagerAdapter.ViewHolde
     }
 
     private void scrollPageDownIfNecessary() {
-        if (selectedItem % SCROLL_DOWN_INDEX == 0) {
+        if (selectedItem % SCROLL_MOD == SCROLL_DOWN_INDEX) {
             layoutManager.scrollToPositionWithOffset(selectedItem - SCROLL_DOWN_INDEX, 0);
         }
     }
 
     private void scrollPageUpIfNecessary() {
-        if (selectedItem % SCROLL_UP_INDEX == 0) {
+        if (selectedItem % SCROLL_MOD == SCROLL_UP_INDEX) {
             layoutManager.scrollToPositionWithOffset(selectedItem, 0);
         }
     }

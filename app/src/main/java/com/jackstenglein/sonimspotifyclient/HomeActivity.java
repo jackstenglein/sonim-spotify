@@ -15,8 +15,6 @@ import com.jackstenglein.sonimspotifyclient.podcasts.FollowedPodcastsActivity;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
-import com.spotify.protocol.client.CallResult;
-import com.spotify.protocol.types.PlayerState;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
@@ -83,7 +81,6 @@ public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickL
     private static final String[] SPOTIFY_SCOPES = new String[] {"app-remote-control",
             "playlist-read-private", "user-library-read", "user-library-modify",
             "user-read-playback-position" };
-
 
     // Spotify connection variables
     private String spotifyAccessToken;
@@ -185,7 +182,6 @@ public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickL
 
     @Override
     public void onTick(Stopwatch stopwatch) {
-//        Log.d(TAG, "onTick: getting playerState");
         spotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(
                 playerState -> nowPlayingUI.update(playerState));
     }
@@ -204,8 +200,6 @@ public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickL
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
-        Log.d(TAG, "onKeyDown: " + keyCode, null);
-
         if (keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
             updateSelectedItem(keyCode);
             return true;

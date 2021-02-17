@@ -79,9 +79,6 @@ public class PodcastDetailActivity extends AbstractEpisodeListActivity<SimpleEpi
             return null;
         }
 
-        Log.d(TAG, "getReleaseDate: precision: " + episode.release_date_precision);
-        Log.d(TAG, "getReleaseDate: date: " + episode.release_date);
-
         if (RELEASE_PRECISION_YEAR.equals(episode.release_date_precision)) {
             return episode.release_date;
         }

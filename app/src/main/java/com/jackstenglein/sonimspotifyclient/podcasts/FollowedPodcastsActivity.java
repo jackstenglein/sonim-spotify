@@ -1,7 +1,6 @@
 package com.jackstenglein.sonimspotifyclient.podcasts;
 
 import android.content.Intent;
-
 import com.jackstenglein.sonimspotifyclient.HomeActivity;
 import com.jackstenglein.sonimspotifyclient.list.AbstractEpisodeListActivity;
 import java.util.HashMap;
