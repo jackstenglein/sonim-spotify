@@ -187,12 +187,7 @@ public class HomeActivity extends AppCompatActivity implements Stopwatch.OnTickL
     public void onTick(Stopwatch stopwatch) {
 //        Log.d(TAG, "onTick: getting playerState");
         spotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(
-            new CallResult.ResultCallback<PlayerState>() {
-                @Override
-                public void onResult(PlayerState playerState) {
-                    nowPlayingUI.update(playerState);
-                }
-        });
+                playerState -> nowPlayingUI.update(playerState));
     }
 
     @Override

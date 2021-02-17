@@ -38,7 +38,16 @@ public abstract class AbstractListActivity<T, K> extends AppCompatActivity imple
         songsList.setAdapter(adapter);
         songsList.setLayoutManager(layoutManager);
 
-        connectToSpotifyAppRemote();
+        if (shouldConnectToSpotifyAppRemote()) {
+            connectToSpotifyAppRemote();
+        } else {
+            spotifyWebApi = getSpotifyWebApi();
+            getNextPage(null);
+        }
+    }
+
+    protected boolean shouldConnectToSpotifyAppRemote() {
+        return true;
     }
 
     private void connectToSpotifyAppRemote() {
