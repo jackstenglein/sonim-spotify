@@ -21,6 +21,7 @@
         <activity android:name=".podcasts.PodcastDetailActivity" />
         <activity android:name=".nowplaying.NowPlayingActivity" />
         <activity android:name=".playlists.PlaylistsActivity" />
+        <activity android:name=".playlists.PlaylistDetailActivity" />
         <activity android:name="com.spotify.sdk.android.auth.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     </application>

@@ -130,6 +130,10 @@ public class PagerAdapter<T> extends RecyclerView.Adapter<PagerAdapter.ViewHolde
         return null;
     }
 
+    public int getSelectedIndex() {
+        return selectedItem;
+    }
+
     @NonNull
     @Override
     public ViewHolder<T> onCreateViewHolder(ViewGroup parent, int viewType) {
