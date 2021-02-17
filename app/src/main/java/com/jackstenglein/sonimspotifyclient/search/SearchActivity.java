@@ -90,8 +90,6 @@ public class SearchActivity extends AbstractListActivity<Object, SpotifySearchSe
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-        Log.d(TAG, "dispatchKeyEvent: " + keyEvent);
-
         if (keyEvent.getAction() == KeyEvent.ACTION_DOWN &&
                 keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN &&
                 searchBar.isFocused() && adapter.getItemCount() > 0) {
@@ -135,6 +133,8 @@ public class SearchActivity extends AbstractListActivity<Object, SpotifySearchSe
 
     @Override
     public void getNextPage(Pager<Object> currentPage) {
+        Log.d(TAG, "getNextPage: nextOffset: " + nextOffset);
+        Log.d(TAG, "getNextPage: maxTotal: " + maxTotal);
         if (nextOffset > maxTotal) return;
         search(nextOffset);
     }
@@ -176,6 +176,7 @@ public class SearchActivity extends AbstractListActivity<Object, SpotifySearchSe
 
         Pager<Object> pager = new Pager<>();
         pager.items = results;
+        pager.next = (nextOffset < maxTotal) ? "next" : null;
         adapter.addPage(pager);
     }
 

@@ -1,5 +1,6 @@
 package com.jackstenglein.sonimspotifyclient.list;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -25,6 +26,7 @@ public abstract class AbstractListActivity<T, K> extends AppCompatActivity imple
     protected PagerAdapter<T> adapter;
     protected K spotifyWebApi;
     protected SpotifyAppRemote spotifyAppRemote;
+    protected boolean appRemoteReconnecting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +67,10 @@ public abstract class AbstractListActivity<T, K> extends AppCompatActivity imple
                 Log.d(getTag(), "Connected to spotify app remote");
 
                 spotifyWebApi = getSpotifyWebApi();
-                if (shouldFetchImmediately()) {
+                if (!appRemoteReconnecting && shouldFetchImmediately()) {
                     getNextPage(null);
+                } else if (appRemoteReconnecting) {
+                    appRemoteReconnecting = false;
                 }
             }
 
@@ -97,8 +101,6 @@ public abstract class AbstractListActivity<T, K> extends AppCompatActivity imple
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
-        Log.d(getTag(), "onKeyDown: " + keyCode, null);
-
         if (keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
             adapter.updateSelection(keyCode);
             return true;
@@ -117,5 +119,15 @@ public abstract class AbstractListActivity<T, K> extends AppCompatActivity imple
         super.onStop();
         SpotifyAppRemote.disconnect(spotifyAppRemote);
         spotifyAppRemote = null;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        if (shouldConnectToSpotifyAppRemote()) {
+            appRemoteReconnecting = true;
+            connectToSpotifyAppRemote();
+        }
     }
 }
