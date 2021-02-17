@@ -1,4 +1,4 @@
-package com.jackstenglein.sonimspotifyclient;
+package com.jackstenglein.sonimspotifyclient.home;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -9,6 +9,9 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import java.util.HashMap;
+import com.jackstenglein.sonimspotifyclient.nowplaying.NowPlayingActivity;
+import com.jackstenglein.sonimspotifyclient.nowplaying.NowPlayingUI;
+import com.jackstenglein.sonimspotifyclient.R;
 import com.jackstenglein.sonimspotifyclient.likedsongs.LikedSongsActivity;
 import com.jackstenglein.sonimspotifyclient.playlists.PlaylistsActivity;
 import com.jackstenglein.sonimspotifyclient.podcasts.FollowedPodcastsActivity;

@@ -7,7 +7,7 @@ import android.view.KeyEvent;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.jackstenglein.sonimspotifyclient.HomeActivity;
+import com.jackstenglein.sonimspotifyclient.home.HomeActivity;
 import com.jackstenglein.sonimspotifyclient.R;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;

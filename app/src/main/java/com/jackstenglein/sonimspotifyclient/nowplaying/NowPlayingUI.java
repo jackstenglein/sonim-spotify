@@ -1,4 +1,4 @@
-package com.jackstenglein.sonimspotifyclient;
+package com.jackstenglein.sonimspotifyclient.nowplaying;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import com.jackstenglein.sonimspotifyclient.R;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.protocol.client.CallResult;
 import com.spotify.protocol.types.Image;

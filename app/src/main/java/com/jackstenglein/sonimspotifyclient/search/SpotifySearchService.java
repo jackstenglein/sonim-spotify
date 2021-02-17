@@ -1,7 +1,6 @@
 package com.jackstenglein.sonimspotifyclient.search;
 
 import java.util.Map;
-
 import retrofit.Callback;
 import retrofit.http.GET;
 import retrofit.http.QueryMap;

@@ -1,6 +1,6 @@
 package com.jackstenglein.sonimspotifyclient.list;
 
-import com.jackstenglein.sonimspotifyclient.HomeActivity;
+import com.jackstenglein.sonimspotifyclient.home.HomeActivity;
 import com.jackstenglein.sonimspotifyclient.podcasts.SpotifyEpisodeApi;
 import com.jackstenglein.sonimspotifyclient.podcasts.SpotifyEpisodeService;
 

@@ -130,8 +130,9 @@ public class PagerAdapter<T> extends RecyclerView.Adapter<PagerAdapter.ViewHolde
         return null;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder<T> onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView  = LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.primary_secondary_list_item, parent, false);
         selectedBackground = ContextCompat.getDrawable(parent.getContext(),
@@ -140,7 +141,7 @@ public class PagerAdapter<T> extends RecyclerView.Adapter<PagerAdapter.ViewHolde
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder<T> holder, int position) {
         Drawable background = (position == selectedItem) ? selectedBackground : null;
         holder.bind(items.get(position), background);
     }

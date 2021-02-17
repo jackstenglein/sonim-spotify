@@ -29,17 +29,6 @@ public class SpotifySearchApi {
 
     private String mAccessToken;
 
-    /**
-     * Create instance of SpotifyApi with given executors.
-     *
-     * @param httpExecutor executor for http request. Cannot be null.
-     * @param callbackExecutor executor for callbacks. If null is passed than the same
-     *                         thread that created the instance is used.
-     */
-    public SpotifySearchApi(Executor httpExecutor, Executor callbackExecutor) {
-        mSpotifyService = init(httpExecutor, callbackExecutor);
-    }
-
     private SpotifySearchService init(Executor httpExecutor, Executor callbackExecutor) {
 
         final RestAdapter restAdapter = new RestAdapter.Builder()
@@ -68,11 +57,9 @@ public class SpotifySearchApi {
      * If you want to remove token set it to null.
      *
      * @param accessToken The token to set on the wrapper.
-     * @return The instance of the wrapper.
      */
-    public SpotifySearchApi setAccessToken(String accessToken) {
+    public void setAccessToken(String accessToken) {
         mAccessToken = accessToken;
-        return this;
     }
 
     /**

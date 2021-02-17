@@ -1,6 +1,6 @@
 package com.jackstenglein.sonimspotifyclient.list;
 
-import com.jackstenglein.sonimspotifyclient.HomeActivity;
+import com.jackstenglein.sonimspotifyclient.home.HomeActivity;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 
