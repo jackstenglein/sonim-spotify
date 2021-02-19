@@ -95,8 +95,8 @@ public class PagerAdapter<T> extends RecyclerView.Adapter<PagerAdapter.ViewHolde
         } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
             if (selectedItem < items.size() - 1) {
                 selectedItem++;
+                scrollPageUpIfNecessary();
             }
-            scrollPageUpIfNecessary();
             requestNextPageIfNecessary();
         }
         notifyDataSetChanged();
@@ -115,7 +115,7 @@ public class PagerAdapter<T> extends RecyclerView.Adapter<PagerAdapter.ViewHolde
     }
 
     private void requestNextPageIfNecessary() {
-        if (lastPage.next == null) return;
+        if (lastPage == null || lastPage.next == null) return;
         if (requestPending) return;
         if (selectedItem < items.size() - PAGINATION_QUERY_BUFFER) return;
 

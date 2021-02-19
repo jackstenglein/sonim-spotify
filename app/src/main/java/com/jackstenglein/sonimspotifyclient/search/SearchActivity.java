@@ -65,6 +65,7 @@ public class SearchActivity extends AbstractListActivity<Object, SpotifySearchSe
         super.onCreate(savedInstanceState);
         searchBar = findViewById(R.id.searchBar);
         searchBar.setOnEditorActionListener(this);
+        searchBar.requestFocus();
     }
 
     @Override
