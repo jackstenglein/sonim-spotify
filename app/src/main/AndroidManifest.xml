@@ -16,6 +16,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".search.SearchActivity" />
+        <activity android:name=".search.AlbumDetailActivity" />
         <activity android:name=".likedsongs.LikedSongsActivity" />
         <activity android:name=".podcasts.FollowedPodcastsActivity" />
         <activity android:name=".podcasts.PodcastDetailActivity" />

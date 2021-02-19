@@ -29,6 +29,9 @@ import retrofit.client.Response;
 public class SearchActivity extends AbstractListActivity<Object, SpotifySearchService>
         implements TextView.OnEditorActionListener {
 
+    public static final String SPOTIFY_ALBUM_URI_EXTRA = "SpotifyAlbumUri";
+    public static final String SPOTIFY_ALBUM_ID_EXTRA = "SpotifyAlbumId";
+
     private static final String TAG = "SearchActivity";
     private static final int NAVIGATION_REQUEST_CODE = 1764;
     private static final int SEARCH_LIMIT_PER_MEDIA_TYPE = 5;
@@ -105,14 +108,19 @@ public class SearchActivity extends AbstractListActivity<Object, SpotifySearchSe
     @Override
     protected void handleSelection(Object item) {
         if (item instanceof Album) {
-            spotifyAppRemote.getPlayerApi().play(((Album)item).uri);
+            Intent intent = new Intent(this, AlbumDetailActivity.class);
+            intent.putExtra(HomeActivity.SPOTIFY_TOKEN_EXTRA,
+                    getIntent().getStringExtra(HomeActivity.SPOTIFY_TOKEN_EXTRA));
+            intent.putExtra(SPOTIFY_ALBUM_ID_EXTRA, ((Album)item).id);
+            intent.putExtra(SPOTIFY_ALBUM_URI_EXTRA, ((Album)item).uri);
+            startActivityForResult(intent, NAVIGATION_REQUEST_CODE);
         }
 
-        if (item instanceof Track) {
+        else if (item instanceof Track) {
             spotifyAppRemote.getPlayerApi().play(((Track)item).uri);
         }
 
-        if (item instanceof SimpleShow) {
+        else if (item instanceof SimpleShow) {
             Intent intent = new Intent(this, PodcastDetailActivity.class);
             intent.putExtra(HomeActivity.SPOTIFY_TOKEN_EXTRA,
                     getIntent().getStringExtra(HomeActivity.SPOTIFY_TOKEN_EXTRA));
@@ -120,7 +128,7 @@ public class SearchActivity extends AbstractListActivity<Object, SpotifySearchSe
             startActivityForResult(intent, NAVIGATION_REQUEST_CODE);
         }
 
-        if (item instanceof SimpleEpisode) {
+        else if (item instanceof SimpleEpisode) {
             spotifyAppRemote.getPlayerApi().play(((SimpleEpisode)item).uri);
         }
     }
