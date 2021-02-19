@@ -67,12 +67,7 @@ public class NowPlayingUI {
                 getSeconds(track.duration)));
 
         spotifyAppRemote.getImagesApi().getImage(track.imageUri, Image.Dimension.SMALL)
-                .setResultCallback(new CallResult.ResultCallback<Bitmap>() {
-                    @Override
-                    public void onResult(Bitmap bitmap) {
-                        albumImage.setImageBitmap(bitmap);
-                    }
-                });
+                .setResultCallback(bitmap -> albumImage.setImageBitmap(bitmap));
 
         if (container != null) {
             container.setVisibility(View.VISIBLE);

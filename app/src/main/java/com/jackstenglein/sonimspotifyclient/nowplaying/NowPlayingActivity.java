@@ -132,26 +132,19 @@ public class NowPlayingActivity extends AppCompatActivity implements Stopwatch.O
 
     @Override
     public void onTick(Stopwatch stopwatch) {
-        spotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(
-            new CallResult.ResultCallback<PlayerState>() {
-                @Override
-                public void onResult(PlayerState playerState) {
-                    currentPlayerState = playerState;
-                    nowPlayingUI.update(playerState);
-                    getLibraryState();
-                }
+        spotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(playerState -> {
+            currentPlayerState = playerState;
+            nowPlayingUI.update(playerState);
+            getLibraryState();
         });
     }
 
     private void getLibraryState() {
         if (currentPlayerState.track != null) {
             spotifyAppRemote.getUserApi().getLibraryState(currentPlayerState.track.uri)
-                .setResultCallback(new CallResult.ResultCallback<LibraryState>() {
-                    @Override
-                    public void onResult(LibraryState libraryState) {
-                        currentLibraryState = libraryState;
-                        updateControlsUI();
-                    }
+                .setResultCallback(libraryState -> {
+                    currentLibraryState = libraryState;
+                    updateControlsUI();
             });
         }
     }
