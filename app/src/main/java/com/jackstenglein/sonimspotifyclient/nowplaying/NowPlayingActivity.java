@@ -84,7 +84,7 @@ public class NowPlayingActivity extends AppCompatActivity implements Stopwatch.O
         setContentView(R.layout.now_playing_activity);
 
         selectedBackground = ContextCompat.getDrawable(this, R.drawable.selected_item);
-        currentSelection = SelectableItem.Shuffle;
+        currentSelection = SelectableItem.Play;
         for (SelectableItem item : SelectableItem.values()) {
             View view = findViewById(item.getViewID());
             assert(view != null);
